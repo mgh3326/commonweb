@@ -1,5 +1,7 @@
 package me.khmoon.commonweb.post;
 
+import org.springframework.data.domain.Sort;
+
 import javax.persistence.*;
 import java.util.Date;
 

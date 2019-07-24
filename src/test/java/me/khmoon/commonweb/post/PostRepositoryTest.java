@@ -4,9 +4,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -32,5 +34,43 @@ public class PostRepositoryTest {
     UpdatedPost.setTitle("whiteship");
     List<Post> all = postRepository.findAll();
     assertThat(all.size()).isEqualTo(1);
+  }
+
+  @Test
+  public void findByTitleStartsWith() {
+    Post post = new Post();
+    post.setTitle("Spring Data Jpa");
+    postRepository.save(post);
+
+    List<Post> all = postRepository.findByTitleStartsWith("Spring");
+    assertThat(all.size()).isEqualTo(1);
+
+  }
+
+  @Test
+  public void findByTitle() {
+    Post post = new Post();
+    post.setTitle("Spring");
+    postRepository.save(post);
+
+    List<Post> all = postRepository.findByTitle("Spring", Sort.by("title"));
+    assertThat(all.size()).isEqualTo(1);
+
+  }
+
+  @Test
+  public void updateTitle() {
+    Post post = new Post();
+    post.setTitle("Spring");
+    Post spring = postRepository.save(post);
+
+    String hibernate = "hibernate";
+
+    int update = postRepository.updateTitle(hibernate, spring.getId());
+    assertThat(update).isEqualTo(1);
+
+    Optional<Post> byId = postRepository.findById(spring.getId());
+    post = byId.get();
+    assertThat(post.getTitle()).isEqualTo(hibernate);
   }
 }
